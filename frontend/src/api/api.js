@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const publicAPI = axios.create({
-  baseURL: "http://localhost:5000/api", // only the base
+  baseURL: "https://chatapp-s96a.onrender.com/api", // only the base
   withCredentials: true
 });
 
