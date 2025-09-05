@@ -9,7 +9,7 @@ let socket;
 export const connectSocket = async () => {
   if (!socket) {
     socket = io(
-      // "http://localhost:5000",
+      
       "https://chatapp-s96a.onrender.com" ,{
       transports: ["websocket"],
       withCredentials: true,
