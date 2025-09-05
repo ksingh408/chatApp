@@ -1,4 +1,3 @@
-
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -18,12 +17,23 @@ const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 5000;
 
-app.use(cors({ 
-   
-     origin: "https://chat-app-orpin-tau.vercel.app", 
-     credentials: true })
-    );
+// Allowed origins: local + deployed frontend
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://chat-app-orpin-tau.vercel.app"
+];
 
+// Express CORS
+app.use(cors({
+  origin: function(origin, callback){
+    if(!origin) return callback(null, true); // allow Postman or server requests
+    if(allowedOrigins.indexOf(origin) === -1){
+      return callback(new Error("CORS not allowed"), false);
+    }
+    return callback(null, true);
+  },
+  credentials: true
+}));
 
 app.use(express.json());
 app.use(cookieParser());
@@ -32,17 +42,19 @@ app.use(cookieParser());
 app.use('/api/auth', authRoutes);
 app.use('/api/msg', messageRoutes);
 
-// Socket.io
-const io = new Server(server, { cors: {
-     
-     origin: "https://chat-app-orpin-tau.vercel.app",
-    credentials: true } });
-
+// Socket.io with CORS
+const io = new Server(server, { 
+  cors: {
+    origin: allowedOrigins,
+    credentials: true
+  } 
+});
 
 socketHandler(io);
 
 // Start server
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
 
 
 
