@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import publicAPI from '../api/api.js';
-import { connectSocket, getSocket } from "../utils/socket"; 
+// import { connectSocket, getSocket } from "../utils/socket"; 
 import { useAuth0 } from "@auth0/auth0-react";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/authSlice"; 
 // import {connectSocket} from '../utils/socket.js';
 import image from '../assets/Art.png';
+
+
+
+
 const Login = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -32,21 +36,10 @@ const Login = () => {
           const user = res.payload;
           console.log("User ID after login:", user.id);
 
-          // 🔹 connect socket after login
-          //  let socket = getSocket();
-          //  console.log("Socket before connect:", socket);
-          // if (!socket) {
-          //    connectSocket();
-          // }
-          // console.log("Socket before connect:", socket);
 
-
-         console.log("user in localStorage -", localStorage.setItem("user", JSON.stringify(user)));
+        //  console.log("user in localStorage -", localStorage.setItem("user", JSON.stringify(user)));
           
-          // socket.emit("registerUser", userId); // backend ko userId bhejo
-          // console.log("📡 Registered userId with socket:", userId);
-  
-          // ✅ redirect to chat
+        
           navigate("/chat");
         } else {
           alert("Login failed!");
