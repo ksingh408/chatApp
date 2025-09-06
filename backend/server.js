@@ -18,12 +18,14 @@ const app = express();
 const server = createServer(app);
 const PORT = process.env.PORT || 5000;
 
+
+const corsOptions = {
+  origin: process.env.FRONTEND_URL,
+  credentials: true
+};
  
-app.use(cors({ 
-    origin: "http://localhost:5173",
-    
-     credentials: true })
-    );
+app.use(cors(corsOptions))
+ 
 
 
 app.use(express.json());
@@ -34,10 +36,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/msg', messageRoutes);
 
 // Socket.io
-const io = new Server(server, { cors: {
-     origin: "http://localhost:5173", 
-  
-    credentials: true } });
+const io = new Server(server, { cors: corsOptions });
 
 
 socketHandler(io);
