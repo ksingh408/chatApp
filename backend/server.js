@@ -32,6 +32,10 @@ app.use(express.json());
 app.use(cookieParser());
 
 // API routes
+app.get('/', (req, res) => {
+    res.send('Backend is running!');
+  });
+  
 app.use('/api/auth', authRoutes);
 app.use('/api/msg', messageRoutes);
 
