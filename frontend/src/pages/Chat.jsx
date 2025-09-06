@@ -4,7 +4,7 @@
 // ChatPage.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { connectSocket, getSocket } from "../utils/socket.js";
+import { connectSocket, getSocket } from "../api/api.js";
 import FriendList from "../component/friendList";
 import ChatWindow from "../component/chatWindow";
 import publicAPI from "../api/api.js";
@@ -64,6 +64,7 @@ const ChatPage = () => {
     fetchFriends();
   }, []);
 
+  
   useEffect(() => {
     if (search.trim() === "") return;
 

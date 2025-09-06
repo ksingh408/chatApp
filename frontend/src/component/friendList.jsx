@@ -29,16 +29,30 @@ const FriendList = ({ friends, search, setSearch, onSelect, selectedFriend }) =>
           const isSelected = selectedFriend?._id === f._id;
           return (
             <div
-              key={f._id}
-              onClick={() => onSelect(f)}
-              className={`flex items-center justify-between p-3 rounded-lg cursor-pointer transition font-medium ${
-                isSelected
-                  ? "bg-gray-50 text-gray-600 shadow-md"
-                  : "bg-white hover:bg-blue-100 text-gray-700"
-              }`}
-            >
-              <span className="text-base">{f.username || f.name || f.email}</span>
-            </div>
+            key={f._id}
+            onClick={() => onSelect(f)}
+            className={`flex items-center justify-self-auto p-3 rounded-lg cursor-pointer transition font-medium ${
+              isSelected
+                ? "bg-gray-50 text-gray-600 shadow-md"
+                : "bg-white hover:bg-blue-100 text-gray-700"
+            }`}
+          >
+            {/* Profile picture or placeholder circle */}
+            <span className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden bg-gray-300 flex items-center justify-center">
+              {f.profilePic ? (
+                <img
+                  src={f.profilePic}
+                  alt={f.username}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="text-white font-bold">{f.username?.[0] || "U"}</span>
+              )}
+            </span>
+      
+            {/* Username / fallback */}
+            <span className="text-base ml-5">{f.username || f.name || f.email}</span>
+          </div>
           );
         })}
 
