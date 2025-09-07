@@ -7,11 +7,10 @@ import { io } from "socket.io-client";
 // -----------------------------
 // Determine Backend URL
 // -----------------------------
-const DEV_URL = "http://localhost:5000/api"; // your local backend
-const PROD_URL = "https://chatapp-67cs.onrender.com/api";
+// const DEV_URL = "http://localhost:5000/api"; // your local backend
+// const PROD_URL = "https://chatapp-67cs.onrender.com/api";
 
-export const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.MODE === "development" ? DEV_URL : PROD_URL);
-export const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL || (import.meta.env.MODE === "development" ? "http://localhost:5173" : "https://your-frontend.vercel.app");
+export const API_URL = import.meta.env.VITE_API_URL 
 
 // -----------------------------
 // Axios Instance
