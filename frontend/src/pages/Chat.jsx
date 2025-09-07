@@ -4,10 +4,10 @@
 // ChatPage.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
-import { connectSocket, getSocket } from "../api/api.js";
+import  {connectSocket, getSocket } from "../api/api.js";
 import FriendList from "../component/friendList";
 import ChatWindow from "../component/chatWindow";
-import publicAPI from "../api/api.js";
+import {publicAPI} from "../api/api.js";
 
 const ChatPage = () => {
   const reduxUser = useSelector((state) => state.auth.user);

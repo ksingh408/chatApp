@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import publicAPI from '../api/api.js';
+// import publicAPI from '../api/api.js';
 // import { connectSocket, getSocket } from "../utils/socket"; 
 import { useAuth0 } from "@auth0/auth0-react";
 import { useDispatch } from "react-redux";

@@ -1,6 +1,6 @@
 import React, { useState,useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import publicAPI  from '../api/api.js'; // make sure this matches your export
+import {publicAPI}  from '../api/api.js'; // make sure this matches your export
 
 const Signup = () => {
   const [username, setUsername] = useState("");

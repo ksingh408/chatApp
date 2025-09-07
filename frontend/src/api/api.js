@@ -10,12 +10,12 @@ import { io } from "socket.io-client";
 // const DEV_URL = "http://localhost:5000/api"; // your local backend
 // const PROD_URL = "https://chatapp-67cs.onrender.com/api";
 
-export const API_URL = import.meta.env.VITE_API_URL 
+const API_URL = import.meta.env.VITE_API_URL 
 
 // -----------------------------
 // Axios Instance
 // -----------------------------
-export const publicAPI = axios.create({
+ const publicAPI = axios.create({
   baseURL: API_URL,
   withCredentials: true, // send cookies if needed
 });
@@ -37,7 +37,7 @@ let socket = null;
 /**
  * Connect Socket.IO
  */
-export const connectSocket = async () => {
+ const connectSocket = async () => {
   if (!socket) {
     socket = io(API_URL.replace("/api", ""), { // remove /api for socket
       transports: ["websocket"],
@@ -68,15 +68,9 @@ export const connectSocket = async () => {
 export const getSocket = () => socket;
 
 
-// import { io } from "socket.io-client";
 
-// const publicAPI = axios.create({
-//   baseURL : import.meta.env.VITE_API_URL,
-  
-//   withCredentials: true
-// });
 
-// export default publicAPI;
+export {publicAPI,connectSocket};
 
 
 
