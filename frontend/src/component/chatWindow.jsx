@@ -28,16 +28,17 @@ const ChatWindow = ({
 
   return (
    
-    <div className="flex flex-col h-full bg-cyan-50">
+    <div className="flex flex-col h-screen w-auto  lg:w-310 bg-cyan-200">
+
       {/* Header */}
    
-       <div className="flex items-center justify-start p-2 bg-gradient-to-br from-gray-100 via-gray-300  text-shadow-gray-600 shadow-md">
-        <button
+       <div className="flex items-center justify-start p-2 bg-gradient-to-br from-gray-50 via-gray-100  text-shadow-gray-600 shadow-md">
+        {/* <button
           className="md:hidden px-3 py-1 bg-white/20 hover:bg-white/30 rounded text-sm"
           onClick={onBack}
         >
           ← Back
-        </button>
+        </button> */}
         <div className="flex  space-x-3">
           <img
             src={ profilePic || selectedFriend?.profilePic || "/default-avatar.png" }
@@ -68,7 +69,7 @@ const ChatWindow = ({
               className={`flex ${isSender ? "justify-end" : "justify-start"}`}
             >
               <div
-                className={`max-w-[85%] sm:max-w-[70%] p-3 rounded-2xl break-words shadow-md text-[15px] md:text-base ${
+                className={`max-w-[60%] sm:max-w-[40%] p-3 rounded-2xl break-words shadow-md text-[15px] md:text-base ${
                   isSender
                     ? "bg-blue-500 text-white text-right rounded-br-none"
                     : "bg-gray-200 text-gray-900 text-left rounded-bl-none"
@@ -105,11 +106,11 @@ const ChatWindow = ({
             }
           }}
           rows={1}
-          className="flex-1 p-3 border rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none text-base max-h-32"
+          className="flex-1 p-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none text-base max-h-32"
         />
         <button
           onClick={sendMessage}
-          className="px-5 py-2 rounded-2xl bg-gradient-to-r from-cyan-500 to-indigo-400 text-white hover:opacity-90 transition font-medium"
+          className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-indigo-400 text-white hover:opacity-90 transition font-medium"
         >
           Send
         </button>
