@@ -59,6 +59,7 @@ if (mounted){
       try {
         const res = await publicAPI.get("/auth/friends");
         setFriends(res.data);
+        console.log(res.data);
       } catch (err) {
         console.error("Error fetching friends:", err);
       }
@@ -74,6 +75,7 @@ if (mounted){
       try {
         const res = await publicAPI.get(`/auth/search?query=${search}`);
         setFriends(res.data);
+        console.log(res.data);
       } catch (err) {
         console.error(err);
       }
@@ -81,6 +83,8 @@ if (mounted){
 
     return () => clearTimeout(delayDebounceFn);
   }, [search]);
+
+
 
   const sendMessage = () => {
     const socket = socketRef.current;
@@ -104,6 +108,7 @@ if (mounted){
 
     try {
       const res = await publicAPI.get(`/msg/${friend._id}`);
+      console.log(res.data);
       const formattedMessages = res.data.map((m) => ({
         text: m.text,
         senderId: m.sender,
@@ -127,14 +132,15 @@ if (mounted){
 
 
     return (
-      <div className="flex  h-screen w-screen bg-gradient-to-r from-gray-100 to-gray-900 overflow-hidden
+      <div className="flex  h-screen w-screen bg-gradient-to-r from-gray-100 to-gray-200 overflow-hidden
       ">
         
-        {/* Friend List */}
+        {/*---------------------------------------- Friend List----------------------------------- */}
+
         <div
           className={`h-full flex-col shadow-lg border-r border-gray-200 
-            w-full sm:w-2/5 md:w-1/3 lg:w-1/4 xl:w-1/5 
-            ${selectedFriend  ? "hidden md:flex" : "flex"}`}
+            w-full sm:w-2/5 md:w-1/3 lg:w-1/4 xl:w-2/9 
+            ${showFriendList ? "flex" : "hidden"} md:flex`}
         >
           <FriendList
             friends={friends}
@@ -144,13 +150,16 @@ if (mounted){
             setSearch={setSearch}
           />
         </div>
+
     
-        {/* Chat Window */}
-        {selectedFriend && (
+     {/*----------------- Chat Window ----------------------------*/}
+
+        {selectedFriend && !showFriendList && (
   <div
     className="absolute inset-0 transform bg-amber-900 transition-transform duration-200 ease-in-out
-               md:static md:flex md:w-2/3 lg:w-3/4 xl:w-4/5 flex flex-col"
+               md:static md:flex md:w-2/3 lg:w-3/3 xl:w-6/9 flex flex-col"
   >
+
     <ChatWindow
       userId={userId}
       messages={messages}

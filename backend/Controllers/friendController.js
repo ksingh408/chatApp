@@ -1,5 +1,12 @@
 // controllers/userController.js
+
+
+// const { default: FriendList } = require("../../frontend/src/component/friendList.jsx");
 const User = require("../Models/userModel.js");
+
+
+// --------------------------searchUser or Friend --------------------------------------
+
 
  const searchUser = async (req, res) => {
   try {
@@ -24,6 +31,8 @@ console.log(users)
 
 
 
+// --------------------------------------------- Get FriendList ----------------------------------------------------------------
+
  const getFriends = async (req, res) => {
  
   // ---------------console.log("sender ID in getfriends ",req.user._id)
@@ -32,7 +41,7 @@ console.log(users)
     try {
       const user = await User.findById(req.user._id).populate(
         "friends",
-        "username email"
+        "username email profilePic"
       ).select("friend");
 
       
