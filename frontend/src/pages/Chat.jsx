@@ -8,6 +8,7 @@ import  {connectSocket, getSocket } from "../api/api.js";
 import FriendList from "../component/friendList";
 import ChatWindow from "../component/chatWindow";
 import {publicAPI} from "../api/api.js";
+import { useCallback } from "react";
 
 const ChatPage = () => {
   const reduxUser = useSelector((state) => state.auth.user);
@@ -86,7 +87,7 @@ if (mounted){
 
 
 
-  const sendMessage = () => {
+  const sendMessage = useCallback(() => {
     const socket = socketRef.current;
     if (!socket || !socket.connected || !selectedFriend || !message.trim()) return;
 
@@ -98,9 +99,9 @@ if (mounted){
 
     socket.emit("sendMessage", msgData);
     setMessage("");
-  };
+  },[message, selectedFriend]);
 
-  const handleSelectFriend = async (friend) => {
+  const handleSelectFriend = useCallback(async (friend) => {
     if (!friend?._id || !userId) return;
 
     setSelectedFriend(friend);
@@ -128,52 +129,43 @@ if (mounted){
       console.error("Error fetching messages:", err);
       setMessages([]);
     }
-  };
+  }, [userId]);
 
 
     return (
-      <div className="flex  h-screen w-screen bg-gradient-to-r from-gray-100 to-gray-200 overflow-hidden
-      ">
-        
-        {/*---------------------------------------- Friend List----------------------------------- */}
-
-        <div
-          className={`h-full flex-col shadow-lg border-r border-gray-200 
-            w-full sm:w-2/5 md:w-1/3 lg:w-1/4 xl:w-2/9 
-            ${showFriendList ? "flex" : "hidden"} md:flex`}
-        >
-          <FriendList
-            friends={friends}
+      <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
+      {/* Friend List */}
+      <div
+        className={`h-full flex-col border-r border-gray-200 
+          w-full sm:w-2/5 md:w-1/3 lg:w-2/9
+          ${showFriendList ? "flex" : "hidden"} md:flex`}
+      >
+        <FriendList
+          friends={friends}
+          selectedFriend={selectedFriend}
+          onSelect={handleSelectFriend}
+          search={search}
+          setSearch={setSearch}
+        />
+      </div>
+    
+      {/* Chat Window */}
+      {selectedFriend && !showFriendList && (
+        <div className="absolute inset-0 bg-amber-950 md:static md:flex md:w-2/3 lg:w-7/9 flex flex-col">
+          <ChatWindow
+            userId={userId}
+            messages={messages}
+            message={message}
+            setMessage={setMessage}
+            sendMessage={sendMessage}
             selectedFriend={selectedFriend}
-            onSelect={handleSelectFriend}
-            search={search}
-            setSearch={setSearch}
+            onBack={() => setShowFriendList(true)}
           />
         </div>
-
+      )}
+    </div>
+  );    
     
-     {/*----------------- Chat Window ----------------------------*/}
-
-        {selectedFriend && !showFriendList && (
-  <div
-    className="absolute inset-0 transform bg-amber-900 transition-transform duration-200 ease-in-out
-               md:static md:flex md:w-2/3 lg:w-3/3 xl:w-6/9 flex flex-col"
-  >
-
-    <ChatWindow
-      userId={userId}
-      messages={messages}
-      message={message}
-      setMessage={setMessage}
-      sendMessage={sendMessage}
-      selectedFriend={selectedFriend}
-      onBack={() => setShowFriendList(true)}
-    />
-  </div>
-)}
-
-      </div>
-    );
     
   
 };
