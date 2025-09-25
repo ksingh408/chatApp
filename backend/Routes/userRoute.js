@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const protect = require('../Middlewares/authMiddleware');
 const upload =require('../Middlewares/multerMiddleware');
-console.log(upload);
+// console.log(upload);
 const {register,login} =require('../Controllers/userController');
 const {searchUser,getFriends} =require('../Controllers/friendController')
 
