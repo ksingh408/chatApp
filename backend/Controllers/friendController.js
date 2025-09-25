@@ -11,7 +11,7 @@ const User = require("../Models/userModel.js");
  const searchUser = async (req, res) => {
   try {
     const { query } = req.query; // example: /api/users/search?query=john
-    console.log("query is",query)
+    // console.log("query is",query)
     if (!query) {
       return res.status(400).json({ message: "Search query is required" });
     }
@@ -22,8 +22,10 @@ const User = require("../Models/userModel.js");
      ],
       _id: { $ne: req.user.id }, // exclude logged-in user
     }).select("username email");
-console.log(users)
+
+     // console.log(users)
     res.json(users);
+    
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }

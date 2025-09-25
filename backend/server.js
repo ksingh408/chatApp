@@ -19,6 +19,7 @@ const server = createServer(app);
 const PORT = process.env.PORT || 5000;
 
 console.log(process.env.FRONTEND_URL)
+
 const corsOptions = {
   origin: process.env.FRONTEND_URL,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
