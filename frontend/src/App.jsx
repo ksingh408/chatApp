@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import react from 'react';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
@@ -9,22 +11,32 @@ import Chat from './pages/Chat.jsx';
 // import Dashboard from './pages/Dashboard.jsx';
 function App() {
 
-    const hasCookie = document.cookie.split(';').some((item) => item.trim().startsWith('token='));
-    // const [isLoggedIn, setIsLoggedIn] = useState(hasCookie);
+  const [hasCookie, setHasCookie] = useState(document.cookie.split(";").some((item) => item.trim().startsWith('token=')));
+
+  console.log("Has Cookie: ", hasCookie);
 
   return (
     <>
       <Router>
         <Routes>
-          <Route path="/" element={hasCookie ? <chat/>:<Welcome/>} />
-          {/* <Route path="/signup" element={<Signup />} />
-          <Route path="/" element={<Login />} /> */}
-          <Route path="/chat" element={<Chat />} />
-          {/* Add more routes as needed */}
+           <Route path="/" element={hasCookie ? <Chat/>:<Welcome/>} />
+          {/* <Route path='/chat' element={hasCookie ? <Chat/>:<Welcome/>} /> */} 
+          <Route path='/chat' element={<Chat/>} />
+
         </Routes>
       </Router>
      
-    
+      {/* Toast system */}
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="dark"
+      />
     </>
   )
 }

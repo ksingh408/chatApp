@@ -7,6 +7,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import image from "../assets/7563799.jpg";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../redux/authSlice";
+import { toast } from "react-toastify";
 
 import {publicAPI}  from '../api/api.js';
 
@@ -59,13 +60,13 @@ export default function AuthPage() {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
-        alert("Signup successful! Please login.");
+        toast.success("Signup successful! Please login.");
         setIsSignUp(false); // Switch to login
       } else {
         // LOGIN via Redux
         const res = await dispatch(loginUser({ email, password }));
         if (res.meta.requestStatus === "fulfilled") {
-          console.log("✅ Login success:", res.payload);
+          toast.success("✅ Login success:", res.payload);
           navigate("/chat"); // redirect to chat or dashboard
         } else {
           setError("Login failed! Check your credentials.");
@@ -86,29 +87,29 @@ export default function AuthPage() {
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0d0d0f]">
       {/* Background glow */}
       <div className="absolute top-0 left-0 w-full h-full">
-        <div className="absolute top-0 left-0 w-[150%] h-[150%] bg-gradient-to-tr from-indigo-900 via-purple-900 to-fuchsia-800 animate-gradient bg-[length:400%_400%] rounded-full opacity-50 blur-3xl -translate-x-1/4 -translate-y-1/4"></div>
-        <div className="absolute bottom-0 right-0 w-[120%] h-[120%] bg-gradient-to-bl from-blue-900 via-cyan-800 to-teal-700 animate-gradient-reverse bg-[length:400%_400%] rounded-full opacity-40 blur-3xl translate-x-1/4 translate-y-1/4"></div>
+        <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-gradient-to-tr from-indigo-900 via-purple-900 to-fuchsia-800 animate-gradient bg-[length:400%_400%] rounded-full opacity-50 blur-3xl -translate-x-1/4 -translate-y-1/4"></div>
+        <div className="absolute bottom-0 right-0 w-[120%] h-[90%] bg-gradient-to-bl from-blue-900 via-cyan-800 to-teal-700 animate-gradient-reverse bg-[length:400%_400%] rounded-full opacity-40 blur-3xl translate-x-1/4 translate-y-1/4"></div>
       </div>
 
       {/* -----------------------------Panels -----------------*/}
 
-      <div className={`relative flex flex-col auth:flex-row w-[90%] max-w-4xl shadow-2xl rounded-3xl overflow-hidden backdrop-blur-md transition-all duration-700 ${isSignUp ? "auth:flex-row-reverse" : ""}`}>
+      <div className={`relative flex flex-col auth:flex-row w-[70%] md:w-[85%] max-w-4xl h-[50%] shadow-2xl rounded-3xl overflow-hidden backdrop-blur-md transition-all duration-700 ${isSignUp ? "auth:flex-row-reverse" : ""}`}>
         
 
         {/* -------------------------Left Panel------------------------------ */}
 
-        <div className="flex-1 flex flex-col justify-center items-center text-white p-12 bg-gradient-to-br from-purple-900 via-fuchsia-800 to-pink-700 transition-all duration-700">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center auth:text-left">
+        <div className="flex-1 flex flex-col justify-center items-center text-white px-4 py-6 md:p-8 max:p-12 bg-gradient-to-br from-purple-900 via-fuchsia-800 to-pink-700 transition-all duration-700">
+          <h1 className="text-xl md:text-5xl font-bold my-0.5 md:my-3  text-center auth:text-left">
             {isSignUp ? "Join ChatApp" : "Welcome Back!"}
           </h1>
-          <p className="text-lg md:text-xl mb-8 max-w-md text-center auth:text-left text-gray-200">
+          <p className="text-lg md:text-xl mb-2 max:mb-8 max-w-md text-center auth:text-left text-gray-200">
             {isSignUp
               ? "Create an account and connect instantly with your friends."
               : "Connect with your friends and family instantly. Chat, share, and stay in touch wherever you are."}
           </p>
           <button
             onClick={() => setIsSignUp(!isSignUp)}
-            className="mt-4 px-6 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-black transition"
+            className="mt-4 px-6 py-3 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-black transition hidden auth:block"
           >
             {isSignUp ? "Login" : "Sign Up"}
           </button>
@@ -118,13 +119,14 @@ export default function AuthPage() {
 
         {/* ------------------Right Panel - Form -------------------*/}
 
-        <div className="flex-1 flex flex-col justify-center items-center bg-[#1a1a1d]/80 text-gray-200 p-10 md:p-16 transition-all duration-700 backdrop-blur-md">
-          <h2 className="text-2xl font-bold mb-6 text-white">{isSignUp ? "Create Account" : "Login to Your Account"}</h2>
+        <div className="flex-1 flex flex-col justify-center items-center bg-[#1a1a1d]/80 text-gray-200 px-10 py-2 md:p-8 mx:p-16 transition-all duration-900 backdrop-blur-md">
+          <h2 className="text-xl md:text-2xl font-bold mb-4 text-white">{isSignUp ? "Create Account" : "Login to Your Account"}</h2>
 
-          <form className="w-full max-w-sm flex flex-col gap-4" onSubmit={handleSubmit}>
+          <form className="w-full max-w-sm flex flex-col gap-1 md:gap-2 max:gap-4" onSubmit={handleSubmit}>
 
             {isSignUp && (
-              <div className="flex items-center gap-2 bg-[#2a2a2e] px-3 py-2 rounded-full">
+              <div className="flex items-center gap-2 bg-[#2a2a2e] px-3 py-1.5
+              md:py-2 rounded-full">
                 <MdAlternateEmail className="text-gray-400 text-lg" />
                 <input
                   type="text"
@@ -203,7 +205,7 @@ export default function AuthPage() {
             </button>
           </form>
 
-          <div className="flex w-full items-center gap-2 py-6 text-sm text-gray-400">
+          <div className="flex w-full items-center gap-2 py-2 md:py-4 max:py-6 text-sm text-gray-400">
             <div className="h-px w-full bg-gray-700"></div>
             <span>OR</span>
             <div className="h-px w-full bg-gray-700"></div>
