@@ -1,15 +1,19 @@
+// ---------------------ChatPage.jsx------------------------
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MdAlternateEmail } from "react-icons/md";
 import { FaFingerprint, FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { BsApple } from "react-icons/bs";
 import { FaXTwitter } from "react-icons/fa6";
-import image from "../assets/7563799.jpg";
-import { useDispatch } from "react-redux";
-import { loginUser } from "../redux/authSlice";
 import { toast } from "react-toastify";
 
-import {publicAPI}  from '../api/api.js';
+import image from "../assets/7563799.jpg";
+
+import { useDispatch } from "react-redux";
+import { loginUser } from "../redux/authSlice";
+import { registerUser } from "../redux/authSlice";
+
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -30,6 +34,7 @@ export default function AuthPage() {
 
   // Preview profile picture
   useEffect(() => {
+
     if (!profilePic) return setPreview(null);
     const objectUrl = URL.createObjectURL(profilePic);
     setPreview(objectUrl);
@@ -47,30 +52,23 @@ export default function AuthPage() {
       return;
     }
 
+
     try {
       if (isSignUp) {
         // SIGNUP
-        const formData = new FormData();
-        formData.append("username", username);
-        formData.append("email", email);
-        formData.append("password", password);
-        if (profilePic) formData.append("profilePic", profilePic);
+       const res = await dispatch(registerUser({username,email,password,profilePic})).unwrap();
+       toast.success("Signup successful!.");
+     
+        navigate("/chat");
+       }
+     
 
-        const res = await publicAPI.post("/auth/register", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
-
-        toast.success("Signup successful! Please login.");
-        setIsSignUp(false); // Switch to login
-      } else {
+       else {
         // LOGIN via Redux
-        const res = await dispatch(loginUser({ email, password }));
-        if (res.meta.requestStatus === "fulfilled") {
-          toast.success("✅ Login success:", res.payload);
-          navigate("/chat"); // redirect to chat or dashboard
-        } else {
-          setError("Login failed! Check your credentials.");
-        }
+         const res = await dispatch(loginUser({ email, password })).unwrap();
+         toast.success("✅ Login success:", res.payload);
+         navigate("/chat"); // redirect to chat or dashboard
+        
       }
     } catch (err) {
       console.error(err);
@@ -84,28 +82,28 @@ export default function AuthPage() {
   
   return (
     
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0d0d0f]">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#1f1f2e]">
       {/* Background glow */}
       <div className="absolute top-0 left-0 w-full h-full">
-        <div className="absolute top-0 left-0 w-[100%] h-[100%] bg-gradient-to-tr from-indigo-900 via-purple-900 to-fuchsia-800 animate-gradient bg-[length:400%_400%] rounded-full opacity-50 blur-3xl -translate-x-1/4 -translate-y-1/4"></div>
-        <div className="absolute bottom-0 right-0 w-[120%] h-[90%] bg-gradient-to-bl from-blue-900 via-cyan-800 to-teal-700 animate-gradient-reverse bg-[length:400%_400%] rounded-full opacity-40 blur-3xl translate-x-1/4 translate-y-1/4"></div>
+        <div className="absolute top-0 left-0 w-[100%] h-[90%] bg-gradient-to-tr from-indigo-600 via-purple-500 to-pink-400 animate-gradient bg-[length:400%_400%] rounded-full opacity-50 blur-3xl -translate-x-1/4 -translate-y-1/4"></div>
+        <div className="absolute bottom-0 right-0 w-[120%] h-[120%] bg-gradient-to-bl from-blue-600 via-cyan-500 to-teal-400 animate-gradient-reverse bg-[length:400%_400%] rounded-full opacity-40 blur-3xl translate-x-1/4 translate-y-1/4"></div>
       </div>
 
       {/* -----------------------------Panels -----------------*/}
 
-      <div className={`relative flex flex-col auth:flex-row w-[70%] md:w-[85%] max-w-4xl h-[50%] shadow-2xl rounded-3xl overflow-hidden backdrop-blur-md transition-all duration-700 ${isSignUp ? "auth:flex-row-reverse" : ""}`}>
+      <div className={`relative flex flex-col auth:flex-row w-[80%] md:w-[85%] max-w-4xl h-[50%] shadow-2xl rounded-3xl overflow-hidden backdrop-blur-md transition-all duration-700 ${isSignUp ? "auth:flex-row-reverse" : ""}`}>
         
 
         {/* -------------------------Left Panel------------------------------ */}
 
-        <div className="flex-1 flex flex-col justify-center items-center text-white px-4 py-6 md:p-8 max:p-12 bg-gradient-to-br from-purple-900 via-fuchsia-800 to-pink-700 transition-all duration-700">
+        <div className="flex-1 flex flex-col justify-center items-center text-white px-4 py-4 md:p-8 max:p-12 bg-gradient-to-br from-purple-500 via-pink-500 to-red-400 transition-all duration-700">
           <h1 className="text-xl md:text-5xl font-bold my-0.5 md:my-3  text-center auth:text-left">
             {isSignUp ? "Join ChatApp" : "Welcome Back!"}
           </h1>
           <p className="text-lg md:text-xl mb-2 max:mb-8 max-w-md text-center auth:text-left text-gray-200">
             {isSignUp
-              ? "Create an account and connect instantly with your friends."
-              : "Connect with your friends and family instantly. Chat, share, and stay in touch wherever you are."}
+              ? "Create an account and connect with friends."
+              : "Connect with your friends and family."}
           </p>
           <button
             onClick={() => setIsSignUp(!isSignUp)}
@@ -119,7 +117,7 @@ export default function AuthPage() {
 
         {/* ------------------Right Panel - Form -------------------*/}
 
-        <div className="flex-1 flex flex-col justify-center items-center bg-[#1a1a1d]/80 text-gray-200 px-10 py-2 md:p-8 mx:p-16 transition-all duration-900 backdrop-blur-md">
+        <div className="flex-1 flex flex-col justify-center items-center bg-[#1a1a1d]/90 text-gray-200 px-10 py-2 md:p-8 mx:p-16 transition-all duration-900 backdrop-blur-md">
           <h2 className="text-xl md:text-2xl font-bold mb-4 text-white">{isSignUp ? "Create Account" : "Login to Your Account"}</h2>
 
           <form className="w-full max-w-sm flex flex-col gap-1 md:gap-2 max:gap-4" onSubmit={handleSubmit}>

@@ -2,6 +2,8 @@
 // import React from "react";
 // FriendList.jsx
 import React from "react";
+// import { useSelector } from "react-redux";
+import useLogout from "../customHook/useLogout.jsx";
 
 const FriendList = ({ friends, search, setSearch, onSelect, selectedFriend }) => {
   
@@ -10,14 +12,22 @@ const FriendList = ({ friends, search, setSearch, onSelect, selectedFriend }) =>
     return name.toLowerCase().includes(search.toLowerCase());
   });
 
+  const handleLogout = useLogout();
+
 
   return (
     <div className="flex flex-col h-screen bg-white border-r border-gray-200 shadow-sm">
  
   {/*------------------ Header --------------------*/}
-  <div className="p-4 border-b border-gray-200">
-    <h2 className="text-xl font-semibold text-gray-800">Chats</h2>
-  </div>
+  <div className="flex flex-row items-center p-4 border-b border-gray-200 justify-between">
+  <h2 className="text-xl font-semibold text-gray-800">Chats</h2>
+  <button
+    onClick={handleLogout}
+    className="px-2 py-2 text-sm text-gray-800 rounded-lg hover:bg-red-200 transition"
+  >
+    Logout
+  </button>
+</div>
 
   {/* ------------------------Search Input ---------------------------------*/}
   <div className="p-3">

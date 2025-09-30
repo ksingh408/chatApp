@@ -1,25 +1,45 @@
-import { useState } from 'react'
-import react from 'react';
+import React,{ useEffect, useState } from 'react'
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 
-import Signup from './pages/Signup.jsx';
 import Welcome from './pages/Welcome.jsx';
 import Chat from './pages/Chat.jsx';
-// import Dashboard from './pages/Dashboard.jsx';
+
+import { publicAPI } from './api/api.js'; 
+
 function App() {
 
-  const [hasCookie, setHasCookie] = useState(document.cookie.split(";").some((item) => item.trim().startsWith('token=')));
+  const [loading, setLoading] = useState(true);
+  const [loggedIn, setLoggedIn] = useState(false);
 
-  console.log("Has Cookie: ", hasCookie);
+useEffect(() => {
+  const checkAuth = async () => {
+
+    try {
+      const res = await publicAPI.get("/auth/check");
+      setLoggedIn(res.loggedIn);
+    } catch (err) {
+      console.error("Auth check failed:", err);
+      setLoggedIn(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  checkAuth();
+}, []);
+
+if (loading) {
+  return <div>Loading...</div>; // or a spinner
+}
 
   return (
     <>
       <Router>
         <Routes>
-           <Route path="/" element={hasCookie ? <Chat/>:<Welcome/>} />
+           <Route path="/" element={loggedIn ? <Chat/>:<Welcome/>} />
           {/* <Route path='/chat' element={hasCookie ? <Chat/>:<Welcome/>} /> */} 
           <Route path='/chat' element={<Chat/>} />
 
