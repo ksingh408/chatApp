@@ -16,7 +16,7 @@ const ChatWindow = ({
   useEffect(() => {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 50);
+    }, 20);
   }, [messages]);
 
 
