@@ -3,11 +3,13 @@ const router = express.Router();
 const protect = require('../Middlewares/authMiddleware');
 const upload =require('../Middlewares/multerMiddleware');
 // console.log(upload);
-const {register,login} =require('../Controllers/userController');
+const {register,login, checkAuth, logout} =require('../Controllers/userController');
 const {searchUser,getFriends} =require('../Controllers/friendController')
 
 router.post('/register',upload.single('profilePic') , register);
 router.post('/login' , login);
+router.post('/logout',logout)
+router.get('/check' ,checkAuth)
 router.get("/search",protect,  searchUser);
 router.get("/friends",protect,  getFriends);
 

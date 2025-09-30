@@ -43,6 +43,21 @@ const register = async (req, res) => {
 
         await newUser.save();
 
+        
+        const token = jwt.sign(
+            { id: existingUser._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
+
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: false, // true in production with HTTPS
+            sameSite: "lax",
+            maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        });
+
+
         res.status(201).json({
             message: 'User registered successfully',
             user: {
@@ -64,7 +79,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try {
         const { email, password } = req.body;
-
+       console.log(req.body);
         if (!email || !password) {
             return res.status(400).json({ message: 'All fields are required' });
         }
@@ -92,6 +107,7 @@ const login = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
         });
 
+          console.log (existingUser)
         res.json({
             message: 'Login successful',
             token,
@@ -108,4 +124,50 @@ const login = async (req, res) => {
 };
 
 
-module.exports = {register,login};
+
+
+
+
+// ------------------------Auth check ----------------------------------------
+
+const checkAuth = async (req, res) => {
+    try {
+      const token = req.cookies.token;
+      if (!token) return res.json({ loggedIn: false });
+  
+      jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+        if (err) return res.json({ loggedIn: false });
+  
+        const existingUser = await user.findById(decoded.id);
+        if (!existingUser) return res.json({ loggedIn: false });
+  
+        res.json({
+          loggedIn: true,
+          user: {
+            id: existingUser._id,
+            username: existingUser.username,
+            email: existingUser.email,
+            profilePic: existingUser.profilePic,
+          },
+        });
+      });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  };
+
+
+//   --------------------- Logout -------------------------------
+
+const logout =("/logout", (req, res) => {
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure:false, 
+    sameSite: "lax",
+  });
+  res.status(200).json({ message: "Logged out successfully" });
+});
+
+module.exports = {register,login,checkAuth,logout};
+
+
