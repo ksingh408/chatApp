@@ -1,17 +1,20 @@
 // ---------------------ChatPage.jsx------------------------
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useSelector } from "react-redux";
 
+
+// ChatPage.jsx
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+import  {connectSocket, getSocket } from "../api/api.js";
 import FriendList from "../component/friendList";
 import ChatWindow from "../component/chatWindow";
-
-import { connectSocket, getSocket } from "../api/api.js";
-import { publicAPI } from "../api/api.js";
+import {publicAPI} from "../api/api.js";
+import { useCallback } from "react";
 
 const ChatPage = () => {
   const reduxUser = useSelector((state) => state.auth.user);
   const userId = reduxUser?._id || reduxUser?.id;
+  const dispatach = useDispatch();
 
   const [friends, setFriends] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -124,34 +127,29 @@ const ChatPage = () => {
       setSelectedFriend(friend);
       setShowFriendList(false);
 
-      try {
-        const res = await publicAPI.get(`/msg/${friend._id}`);
-        console.log(res);
+    try {
+      const res = await publicAPI.get(`/msg/${friend._id}`);
+      console.log(res.data);
+      const formattedMessages = res.data.map((m) => ({
+        text: m.text,
+        senderId: m.sender,
+        receiverId: m.receiver,
+        roomId: m.conversationId,
+        createdAt: m.createdAt,
+      }));
+      setMessages(formattedMessages);
 
-        const formattedMessages = res.map((m) => ({
-          text: m.text,
-          senderId: m.sender,
-          receiverId: m.receiver,
-          roomId: m.conversationId,
-          createdAt: m.createdAt,
-        }));
-        setMessages(formattedMessages);
-
-        const roomId = [userId, friend._id].sort().join("_");
-
-        if (!socketRef.current || !socketRef.current.connected) {
-          socketRef.current = await connectSocket();
-        }
-
-        socketRef.current.emit("joinRoom", roomId);
-        socketRef.current.currentRoom = roomId;
-      } catch (err) {
-        console.error("Error fetching messages:", err);
-        setMessages([]);
+      const roomId = [userId, friend._id].sort().join("_");
+      if(!socketRef.current || !socketRef.current.connected){
+        socketRef.current = await connectSocket();
       }
-    },
-    [userId]
-  );
+      socketRef.current.emit("joinRoom", roomId);
+      socketRef.current.currentRoom = roomId;
+    } catch (err) {
+      console.error("Error fetching messages:", err);
+      setMessages([]);
+    }
+  }, [userId]);
 
   // ------------------- JSX -------------------
   return (
