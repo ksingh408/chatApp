@@ -1,6 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { deletemessage } from "../redux/msgSlice.js";
 
 const ChatWindow = ({
   userId,
@@ -12,7 +10,7 @@ const ChatWindow = ({
   selectedFriend,
   onBack,
 }) => {
-  const dispatch = useDispatch();
+
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -21,16 +19,6 @@ const ChatWindow = ({
     }, 20);
   }, [messages]);
 
-  const handleDeleteMessage = async (messageId) => {
-    if (!messageId) return;
-    try {
-      await dispatch(deletemessage(messageId)).unwrap();
-    } catch (err) {
-      console.error("Failed to delete message:", err);
-      alert("Could not delete the message. Try again.");
-    }
-  };
-  
 
   const formatTime = (dateString) => {
     if (!dateString) return "";
@@ -100,7 +88,6 @@ const ChatWindow = ({
     {/* Messages */}
     <div className="flex-1 overflow-y-auto p-4 space-y-3">
       {messages.map((m, idx) => {
-        console.log("message id:", m._id);
         const senderId = m.senderId._id || m.senderId;
         const isSender = senderId.toString() === userId?.toString();
   
@@ -109,7 +96,7 @@ const ChatWindow = ({
         const prevDateLabel = prevMessage ? getDateLabel(prevMessage.createdAt) : null;
   
         return (
-          <React.Fragment key={m._id}>
+          <React.Fragment key={idx}>
             {currentDateLabel !== prevDateLabel && (
               <div className="flex justify-center my-3">
                 <span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
@@ -119,14 +106,13 @@ const ChatWindow = ({
             )}
   
             <div className={`flex ${isSender ? "justify-end" : "justify-start"}`}>
-              <div onDoubleClick={() => handleDeleteMessage(m._id)}
+              <div
                 className={`max-w-[80%] sm:max-w-[70%] md:max-w-[60%] p-3 rounded-2xl break-words text-sm shadow 
                   ${isSender
                     ? "bg-blue-500 text-white rounded-br-none"
                     : "bg-gray-100 text-gray-800 border border-gray-200 rounded-bl-none"}`}
               >
                 <div>{m.text}</div>
-
                 {m.createdAt && (
                   <div
                     className={`text-xs mt-1 ${
