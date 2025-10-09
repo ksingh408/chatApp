@@ -14,7 +14,7 @@ import { useCallback } from "react";
 const ChatPage = () => {
   const reduxUser = useSelector((state) => state.auth.user);
   const userId = reduxUser?._id || reduxUser?.id;
-  const dispatach = useDispatch();
+  // const dispatach = useDispatch();
 
   const [friends, setFriends] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
@@ -130,7 +130,7 @@ const ChatPage = () => {
     try {
       const res = await publicAPI.get(`/msg/${friend._id}`);
       console.log(res.data);
-      const formattedMessages = res.data.map((m) => ({
+      const formattedMessages = res.map((m) => ({
         text: m.text,
         senderId: m.sender,
         receiverId: m.receiver,

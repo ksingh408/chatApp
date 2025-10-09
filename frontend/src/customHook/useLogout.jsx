@@ -16,9 +16,10 @@ const useLogout = () => {
                 socket.disconnect();
             }
             
-            await publicAPI.post("auth/logout", {}, { withCredentials: true });
+            await publicAPI.post("auth/logout", {}, { withCredentials: true }); 
+            navigate("/");         
             dispatch(logout());
-            navigate("/");
+            
         }
         catch (err) {
             console.error("Logout failed:", err);
