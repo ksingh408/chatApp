@@ -15,7 +15,7 @@ if(import.meta.env.VITE_API_URL){
 
 export const publicAPI = axios.create({
   baseURL: API_URL,
-  withCredentials: true,
+ 
 });
 
 // Optional: Interceptors for error handling
