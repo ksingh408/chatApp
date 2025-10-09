@@ -138,26 +138,26 @@ const ChatPage = () => {
       // setMessages(formattedMessages);
 
         const formattedMessages = res.map((m) => ({
-          text: m.text,
-          senderId: m.sender,
-          receiverId: m.receiver,
-          roomId: m.conversationId,
-          createdAt: m.createdAt,
-        }));
-        setMessages(formattedMessages);
+        text: m.text,
+        senderId: m.sender,
+        receiverId: m.receiver,
+        roomId: m.conversationId,
+        createdAt: m.createdAt,
+      }));
+      setMessages(formattedMessages);
 
-        const roomId = [userId, friend._id].sort().join("_");
+      const roomId = [userId, friend._id].sort().join("_");
 
         if (!socketRef.current || !socketRef.current.connected) {
-          socketRef.current = await connectSocket();
-        }
-
-        socketRef.current.emit("joinRoom", roomId);
-        socketRef.current.currentRoom = roomId;
-      } catch (err) {
-        console.error("Error fetching messages:", err);
-        setMessages([]);
+        socketRef.current = await connectSocket();
       }
+
+      socketRef.current.emit("joinRoom", roomId);
+      socketRef.current.currentRoom = roomId;
+    } catch (err) {
+      console.error("Error fetching messages:", err);
+      setMessages([]);
+    }
     },
     [userId]
   );

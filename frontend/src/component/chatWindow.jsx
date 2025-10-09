@@ -123,7 +123,7 @@ const ChatWindow = ({
         const prevDateLabel = prevMessage ? getDateLabel(prevMessage.createdAt) : null;
   
         return (
-          <React.Fragment key={idx}>
+          <React.Fragment key={m._id}>
             {currentDateLabel !== prevDateLabel && (
               <div className="flex justify-center my-3">
                 <span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
@@ -133,13 +133,14 @@ const ChatWindow = ({
             )}
   
             <div className={`flex ${isSender ? "justify-end" : "justify-start"}`}>
-              <div
+              <div onDoubleClick={() => handleDeleteMessage(m._id)}
                 className={`max-w-[80%] sm:max-w-[70%] md:max-w-[60%] p-3 rounded-2xl break-words text-sm shadow 
                   ${isSender
                     ? "bg-blue-500 text-white rounded-br-none"
                     : "bg-gray-100 text-gray-800 border border-gray-200 rounded-bl-none"}`}
               >
                 <div>{m.text}</div>
+
                 {m.createdAt && (
                   <div
                     className={`text-xs mt-1 ${
