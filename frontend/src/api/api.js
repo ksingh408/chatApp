@@ -5,8 +5,12 @@ import { io } from "socket.io-client";
 
 // --------------Determine Backend URL----------------------------
 
-const API_URL = import.meta.env.VITE_API_URL;
-
+let API_URL ;
+if(import.meta.env.VITE_API_URL){
+  API_URL=import.meta.env.VITE_LOCAL_API_URL
+} else{
+  API_URL=import.meta.env.VITE_LOCAL_API_URL;
+}
 // -------------- Axios Instance --------------------------------
 
 export const publicAPI = axios.create({
