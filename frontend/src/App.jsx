@@ -18,7 +18,7 @@ useEffect(() => {
   const checkAuth = async () => {
 
     try {
-      const res = await publicAPI.get("/auth/check",{ withCredentials: true });
+      const res = await publicAPI.get("/auth/check");
       setLoggedIn(res.loggedIn);
     } catch (err) {
       console.error("Auth check failed:", err);
