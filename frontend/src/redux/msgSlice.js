@@ -5,8 +5,8 @@ import { publicAPI } from "../api/api";
 export const fetchMessages = createAsyncThunk(
   "messages/fetchMessages",
    async({friendId , userId , limit = 15 ,page =1})=>{
-    const res = await publicAPI.get(`/msg/${friendId}`);
-    return res.data;
+    const res = await publicAPI.get(`/msg/${friendId}?limit=${limit}&page=${page}`);
+    return { data: res.messages, page, hasMore: res.hasMore };
    })
 
    export const deletemessage = createAsyncThunk("messages/deleteMessage",
@@ -30,19 +30,23 @@ const messagesSlice = createSlice({
     items: [],
     loading: false,
     error: null,
+    page:1,
+    hasMore: true,
   },
  
 
   reducers: {
-    // addMessage: (state, action) => {
-    //   state.items.push(action.payload);
-    // },
+    addMessage: (state, action) => {
+      state.items.push(action.payload);
+    },
     // prependMessages: (state, action) => {
     //   state.items = [...action.payload, ...state.items];
     // },
-    // clearMessages: (state) => {
-    //   state.items = [];
-    // },
+    clearMessages: (state) => {
+      state.items = [];
+      state.page = 1;
+      state.hasMore = true;
+    },
   },
 
 
@@ -53,12 +57,24 @@ const messagesSlice = createSlice({
       })
       .addCase(fetchMessages.fulfilled, (state, action) => {
         state.loading = false;
-        console.log(action.payload)
-        state.items = action.payload;
+        
+        const {data ,page ,hasMore} = action.payload;
+
+        if(page ===1){
+          state.items = data.reverse()
+        }
+        else{
+          state.items = [...data.reverse(), ...state.items];
+        }
+
+        state.page = page;
+        state.hasMore = hasMore;
+        
       })
       .addCase(fetchMessages.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
+
       })
       .addCase(deletemessage.fulfilled, (state,action)=>{
         state.items = state.items.filter((m)=>m._id !== action.payload);

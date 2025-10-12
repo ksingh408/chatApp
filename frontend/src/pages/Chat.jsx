@@ -125,8 +125,17 @@ const ChatPage = () => {
       setShowFriendList(false);
 
       try {
-        const res = await publicAPI.get(`/msg/${friend._id}`);
-        console.log(res);
+  
+      // const res = await publicAPI.get(`/msg/${friend._id}`);
+      // console.log(res.data);
+      // const formattedMessages = res.map((m) => ({
+      //   text: m.text,
+      //   senderId: m.sender,
+      //   receiverId: m.receiver,
+      //   roomId: m.conversationId,
+      //   createdAt: m.createdAt,
+      // }));
+      // setMessages(formattedMessages);
 
         const formattedMessages = res.map((m) => ({
           text: m.text,

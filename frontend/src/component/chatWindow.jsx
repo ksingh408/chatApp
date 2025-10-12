@@ -1,4 +1,6 @@
 import React, { useEffect, useRef } from "react";
+import { useDispatch } from "react-redux";
+import { deletemessage } from "../redux/msgSlice.js";
 
 const ChatWindow = ({
   userId,
@@ -10,15 +12,39 @@ const ChatWindow = ({
   selectedFriend,
   onBack,
 }) => {
-
+  const dispatch = useDispatch();
   const messagesEndRef = useRef(null);
+  const chatContainerRef = useRef(null);
+  const [initialLoad, setInitialLoad] = React.useState(true);
 
   useEffect(() => {
+    if (selectedFriend?._id) {
+      dispatch(fetchMessages({ friendId: selectedFriend._id, userId, page: 1 }));
+      setInitialLoad(true);
+    }
+  }, [selectedFriend?._id, dispatch, userId]);
+
+
+
+  useEffect(() => {
+    if (initialLoad) {
     setTimeout(() => {
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+      setInitialLoad(false);
     }, 20);
+  }
   }, [messages]);
 
+  const handleDeleteMessage = async (messageId) => {
+    if (!messageId) return;
+    try {
+      await dispatch(deletemessage(messageId)).unwrap();
+    } catch (err) {
+      console.error("Failed to delete message:", err);
+      alert("Could not delete the message. Try again.");
+    }
+  };
+  
 
   const formatTime = (dateString) => {
     if (!dateString) return "";
@@ -88,6 +114,7 @@ const ChatWindow = ({
     {/* Messages */}
     <div className="flex-1 overflow-y-auto p-4 space-y-3">
       {messages.map((m, idx) => {
+        console.log("message id:", m._id);
         const senderId = m.senderId._id || m.senderId;
         const isSender = senderId.toString() === userId?.toString();
   
