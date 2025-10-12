@@ -1,17 +1,20 @@
 // ---------------------ChatPage.jsx------------------------
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
-import { useSelector } from "react-redux";
 
+
+// ChatPage.jsx
+import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
+import  {connectSocket, getSocket } from "../api/api.js";
 import FriendList from "../component/friendList";
 import ChatWindow from "../component/chatWindow";
-
-import { connectSocket, getSocket } from "../api/api.js";
-import { publicAPI } from "../api/api.js";
+import {publicAPI} from "../api/api.js";
+import { useCallback } from "react";
 
 const ChatPage = () => {
   const reduxUser = useSelector((state) => state.auth.user);
   const userId = reduxUser?._id || reduxUser?.id;
+  const dispatach = useDispatch();
 
   const [friends, setFriends] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
