@@ -59,4 +59,34 @@ const getMessages = async (req, res) => {
   }
 };
 
-module.exports = { sendMessage, getMessages };
+
+
+
+const deleteMessage = async (req,res)=>{
+
+  try{
+    const messageId = req.params.id;
+    const userId = req.user.id;
+console.log(messageId)
+    const message = await Message.findById(messageId);
+console.log("messageId :",message);
+    if(!message){
+      return res.status(404).json({message:"message not found "});
+
+    }
+
+    if(message.sender.toString()!== userId){
+      return res.status(403).json({ message: "You cannot delete this message" });
+    }
+
+    await Message.findByIdAndDelete(messageId);
+    res.json({success:true , messageId})
+  }
+  catch(err){
+    console.error("Error in deleteMessage:", err.message);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+
+module.exports = { sendMessage, getMessages , deleteMessage };
