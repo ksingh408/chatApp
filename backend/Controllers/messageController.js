@@ -46,13 +46,19 @@ const getMessages = async (req, res) => {
     // Use same roomId logic as in sendMessage
 
     const roomId = [ userId,friendId].sort().join("_");
-
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
     const messages = await Message.find({ conversationId: roomId })
       .populate("sender", "username email")
       .populate("receiver", "username email")
-      .sort({ createdAt: 1 });
-
-    res.json(messages);
+      .sort({ createdAt: 1 })
+      .skip((page-1)*limit)
+      .limit(limit);
+ 
+    res.json({
+      messages,
+      page,
+      totalPages: Math.ceil(total / limit),});
   } catch (err) {
     console.error("Error in getMessages:", err.message);
     res.status(500).json({ message: "Server error", error: err.message });
