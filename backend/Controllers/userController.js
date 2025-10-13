@@ -125,9 +125,6 @@ const login = async (req, res) => {
 
 
 
-
-
-
 // ------------------------Auth check ----------------------------------------
 
 const checkAuth = async (req, res) => {

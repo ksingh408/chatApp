@@ -13,7 +13,4 @@ router.get('/check' ,checkAuth)
 router.get("/search",protect,  searchUser);
 router.get("/friends",protect,  getFriends);
 
-
-// router.get("/search", protect, searchUser);
-// router.get("/friends", protect, getFriends);
 module.exports=router;
