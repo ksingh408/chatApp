@@ -55,11 +55,13 @@ module.exports = (io) => {
           conversationId: roomId,
         });
 
-        // --------------------Add each other as friends if not already
+        // --------------------Add each other as friends if not already---------------
+
         await User.findByIdAndUpdate(socket.userId, { $addToSet: { friends: receiverId } });
         await User.findByIdAndUpdate(receiverId, { $addToSet: { friends: socket.userId } });
 
         // Emit to everyone in the room
+        
         io.to(roomId).emit("receiveMessage", {
           senderId: message.sender,
           receiverId: message.receiver,

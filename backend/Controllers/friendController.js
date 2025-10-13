@@ -1,7 +1,4 @@
-// controllers/userController.js
 
-
-// const { default: FriendList } = require("../../frontend/src/component/friendList.jsx");
 const User = require("../Models/userModel.js");
 
 
@@ -10,7 +7,8 @@ const User = require("../Models/userModel.js");
 
  const searchUser = async (req, res) => {
   try {
-    const { query } = req.query; // example: /api/users/search?query=john
+    const { query } = req.query;    // example: /api/users/search?query=john
+
     // console.log("query is",query)
     if (!query) {
       return res.status(400).json({ message: "Search query is required" });
@@ -38,7 +36,6 @@ const User = require("../Models/userModel.js");
  const getFriends = async (req, res) => {
  
   // ---------------console.log("sender ID in getfriends ",req.user._id)
-  // console.log(req.user._id)
 
     try {
       const user = await User.findById(req.user._id).populate(

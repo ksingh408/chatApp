@@ -1,5 +1,8 @@
-const mongoose = require("mongoose");
+
 const Message = require("../Models/messageModel.js");
+
+
+//---------------------------------sendMessage---------------------------------------
 
 const sendMessage = async (req, res) => {
   try {
@@ -29,25 +32,19 @@ const sendMessage = async (req, res) => {
 };
 
 
-
+//-----------------------------Get Message ----------------------------------------------
 
 const getMessages = async (req, res) => {
   try {
     const userId = req.user.id;
     const friendId = req.params.friendId;
 
-  //  console.log(`${userId} & ${friendId} & ${mongoose.Types.ObjectId.isValid(friendId)}`)
-  //   if (!mongoose.Types.ObjectId.isValid(friendId)) {
-  //     return res.status(400).json({ message: "Invalid Friend ID" });
-  //   }
-
-
-
-    // Use same roomId logic as in sendMessage
-
     const roomId = [ userId,friendId].sort().join("_");
+
+    const total = await Message.countDocuments({ conversationId: roomId });
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
+    
     const messages = await Message.find({ conversationId: roomId })
       .populate("sender", "username email")
       .populate("receiver", "username email")
@@ -64,8 +61,6 @@ const getMessages = async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
-
-
 
 
 const deleteMessage = async (req,res)=>{
