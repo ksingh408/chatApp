@@ -5,7 +5,9 @@ import { publicAPI } from "../api/api";
 export const fetchMessages = createAsyncThunk(
   "messages/fetchMessages",
    async({friendId , userId , limit = 15 ,page =1})=>{
+
     const res = await publicAPI.get(`/msg/${friendId}?limit=${limit}&page=${page}`);
+    
     return { data: res.messages, page, hasMore: res.hasMore };
    })
 
@@ -33,15 +35,27 @@ const messagesSlice = createSlice({
     page:1,
     hasMore: true,
   },
+
  
 
   reducers: {
     addMessage: (state, action) => {
-      state.items.push(action.payload);
+      const msg = action.payload;
+      // check if message already exists 
+      const exists = state.items.some(
+        (m)=>
+        (m._id && msg._id && m._id === msg._id) ||
+        (m.createdAt === msg.createdAt && m.senderId === msg.senderId)
+      );
+      if(!exists){
+        state.items.push(msg);
+      }
+     
     },
     // prependMessages: (state, action) => {
     //   state.items = [...action.payload, ...state.items];
     // },
+    
     clearMessages: (state) => {
       state.items = [];
       state.page = 1;
@@ -61,7 +75,7 @@ const messagesSlice = createSlice({
         const {data ,page ,hasMore} = action.payload;
 
         if(page ===1){
-          state.items = data.reverse()
+          state.items = data.reverse();
         }
         else{
           state.items = [...data.reverse(), ...state.items];
