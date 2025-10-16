@@ -25,11 +25,11 @@ export const registerUser = createAsyncThunk(
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, { rejectWithValue }) => {
+    console.log({email,password})
     try {
       const res = await publicAPI.post(
         "auth/login",
-        { email, password },
-        { withCredentials: true }
+        { email, password }
       );
       console.log(res.user);
       return res; // backend must return { user, token? }

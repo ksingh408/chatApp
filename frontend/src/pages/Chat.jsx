@@ -4,25 +4,26 @@
 
 // ChatPage.jsx
 import React, { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
 import  {connectSocket, getSocket } from "../api/api.js";
 import FriendList from "../component/friendList";
 import ChatWindow from "../component/chatWindow";
 import {publicAPI} from "../api/api.js";
 import { useCallback } from "react";
+import { addMessage } from "../redux/msgSlice.js";
 
 const ChatPage = () => {
   const reduxUser = useSelector((state) => state.auth.user);
   const userId = reduxUser?._id || reduxUser?.id;
-  const dispatach = useDispatch();
+  const dispatch = useDispatch();
 
   const [friends, setFriends] = useState([]);
   const [selectedFriend, setSelectedFriend] = useState(null);
   const [search, setSearch] = useState("");
-  const [messages, setMessages] = useState([]);
+
   const [message, setMessage] = useState("");
   const [showFriendList, setShowFriendList] = useState(true);
-  const [socketReady, setSocketReady] = useState(false);
+  // const [socketReady, setSocketReady] = useState(false);
 
   const socketRef = useRef(getSocket());
 
@@ -35,23 +36,12 @@ const ChatPage = () => {
         const socket = await connectSocket();
            socketRef.current = socket;
            setSocketReady(true);
-
-           
+       
            socket.on("receiveMessage", (msg) => {
             if (msg.senderId === userId) return; // ignore own messages
-            setMessages(prev => [...prev, msg]);
+            dispatch(addMessage(msg));
           });
-          //   socket.on("receiveMessage", (msg) => {
-          //     setMessages((prev) => {
-          //       // avoid duplicates
-          //       const already = prev.some(
-          //         (m) => m.createdAt === msg.createdAt && m.senderId === msg.senderId
-          //       );
-          //       if (already) return prev;
-            
-          //       return [...prev, msg];
-          //     });
-          // });
+       
         
       } catch (err) {
         console.error("Socket connection failed:", err);
@@ -110,10 +100,9 @@ const ChatPage = () => {
       roomId: socket.currentRoom,
     };
 
-    setMessages(prev => [
-      ...prev,
-      { ...msgData, senderId: userId, createdAt: new Date().toISOString() }
-    ]);
+ 
+
+    dispatch(addMessage({ ...msgData, senderId: userId, createdAt: new Date().toISOString() }));
 
     socket.emit("sendMessage", msgData);
     setMessage("");
@@ -128,17 +117,6 @@ const ChatPage = () => {
       setShowFriendList(false);
 
       try {
-        const res = await publicAPI.get(`/msg/${friend._id}`);
-        console.log(res);
-
-        const formattedMessages = res.map((m) => ({
-          text: m.text,
-          senderId: m.sender,
-          receiverId: m.receiver,
-          roomId: m.conversationId,
-          createdAt: m.createdAt,
-        }));
-        setMessages(formattedMessages);
 
         const roomId = [userId, friend._id].sort().join("_");
 
@@ -179,7 +157,6 @@ const ChatPage = () => {
         <div className="absolute inset-0 bg-amber-950 md:static md:flex md:w-2/3 lg:w-7/9 flex flex-col">
           <ChatWindow
             userId={userId}
-            messages={messages}
             message={message}
             setMessage={setMessage}
             sendMessage={sendMessage}

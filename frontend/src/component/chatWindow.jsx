@@ -1,10 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
-import { deletemessage } from "../redux/msgSlice.js";
+import { useDispatch,useSelector } from "react-redux";
+import { fetchMessages,deletemessage } from "../redux/msgSlice.js";
 
 const ChatWindow = ({
   userId,
-  messages,
   message,
   setMessage,
   sendMessage,
@@ -15,25 +14,80 @@ const ChatWindow = ({
   const dispatch = useDispatch();
   const messagesEndRef = useRef(null);
   const chatContainerRef = useRef(null);
+  const [loadingOlder, setLoadingOlder] = React.useState(false);
   const [initialLoad, setInitialLoad] = React.useState(true);
+
+  const { items: messages, loading, hasMore, page } = useSelector(
+    (state) => state.messages
+  );
+  console.log("messages in chat window:", messages);
 
   useEffect(() => {
     if (selectedFriend?._id) {
       dispatch(fetchMessages({ friendId: selectedFriend._id, userId, page: 1 }));
       setInitialLoad(true);
     }
-  }, [selectedFriend?._id, dispatch, userId]);
+  }, [selectedFriend?._id]);
 
-
-
+ // Auto-scroll on new messages or initial load
   useEffect(() => {
-    if (initialLoad) {
-    setTimeout(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const container = chatContainerRef.current;
+  if (!container || !messages.length) return;
+
+  // Detect if it's the first load or if user is near the bottom
+  const isNearBottom =
+    container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+
+  // Wait a little to ensure DOM is updated
+  if (initialLoad || isNearBottom) {
+    const timeout = setTimeout(() => {
+      messagesEndRef.current?.scrollIntoView({ behavior: initialLoad?"auto":"smooth" });
       setInitialLoad(false);
-    }, 20);
+    }, 200); // increase from 20 → 100 ms for reliability
+
+    return () => clearTimeout(timeout);
   }
-  }, [messages]);
+}, [messages, initialLoad]);
+
+
+
+
+  // Handle infinite scroll (load older messages)
+  useEffect(() => {
+    const container = chatContainerRef.current;
+    if (!container) return;
+  
+    let timeout;
+  
+    const onScroll = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(async () => {
+        if (!container || loadingOlder || loading || !hasMore) return;
+  
+        if (container.scrollTop <= 60) {
+          setLoadingOlder(true);
+          const previousHeight = container.scrollHeight;
+  
+          await dispatch(
+            fetchMessages({ friendId: selectedFriend._id, userId, page: page + 1 })
+          ).unwrap();
+  
+          const newScrollHeight = container.scrollHeight;
+          container.scrollTop = newScrollHeight - previousHeight;
+  
+          setLoadingOlder(false);
+        }
+      }, 150);
+    };
+  
+    container.addEventListener("scroll", onScroll);
+    return () => {
+      clearTimeout(timeout);
+      container.removeEventListener("scroll", onScroll);
+    };
+  }, [loadingOlder, loading, hasMore, page, dispatch, selectedFriend?._id, userId]);
+
+  // ------------------- Delete Message -------------------
 
   const handleDeleteMessage = async (messageId) => {
     if (!messageId) return;
@@ -112,18 +166,18 @@ const ChatWindow = ({
     </div>
   
     {/* Messages */}
-    <div className="flex-1 overflow-y-auto p-4 space-y-3">
+    <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
       {messages.map((m, idx) => {
         console.log("message id:", m._id);
-        const senderId = m.senderId._id || m.senderId;
-        const isSender = senderId.toString() === userId?.toString();
+        const senderId = m.sender?._id || m.senderId || m.sender;
+        const isSender = senderId?.toString() === userId?.toString();
   
         const currentDateLabel = getDateLabel(m.createdAt);
         const prevMessage = messages[idx - 1];
         const prevDateLabel = prevMessage ? getDateLabel(prevMessage.createdAt) : null;
   
         return (
-          <React.Fragment key={m._id}>
+          <React.Fragment key={m._id || m.createdAt || idx}>
             {currentDateLabel !== prevDateLabel && (
               <div className="flex justify-center my-3">
                 <span className="bg-gray-200 text-gray-600 text-xs px-3 py-1 rounded-full">
