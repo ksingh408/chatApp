@@ -18,7 +18,7 @@ useEffect(() => {
   const checkAuth = async () => {
 
     try {
-      const res = await publicAPI.get("/auth/check");
+      const res = await publicAPI.get("api/auth/check");
       setLoggedIn(res.loggedIn);
     } catch (err) {
       console.error("Auth check failed:", err);
@@ -31,7 +31,9 @@ useEffect(() => {
   checkAuth();
 }, []);
 
+console.log("Auth status:", { loggedIn, loading });
 if (loading) {
+  console.log("Loading auth status...");
   return <div>Loading...</div>; // or a spinner
 }
 
