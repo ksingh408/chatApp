@@ -48,7 +48,7 @@ const getMessages = async (req, res) => {
     const messages = await Message.find({ conversationId: roomId })
       .populate("sender", "username email")
       .populate("receiver", "username email")
-      .sort({ createdAt: 1 })
+      .sort({ createdAt: -1 })
       .skip((page-1)*limit)
       .limit(limit);
  
