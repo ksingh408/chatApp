@@ -8,7 +8,7 @@ export const fetchMessages = createAsyncThunk(
 
     const res = await publicAPI.get(`/msg/${friendId}?limit=${limit}&page=${page}`);
     
-    return { data: res.messages, page, hasMore: res.hasMore };
+    return { data: res.messages, page:res.page, hasMore: res.hasMore };
    })
 
    export const deletemessage = createAsyncThunk("messages/deleteMessage",

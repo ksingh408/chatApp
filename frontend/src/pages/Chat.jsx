@@ -1,8 +1,5 @@
-// ---------------------ChatPage.jsx------------------------
+// ---------------------ChatPage.jsx----------------------
 
-
-
-// ChatPage.jsx
 import React, { useState, useEffect, useRef } from "react";
 import { useSelector,useDispatch } from "react-redux";
 import  {connectSocket, getSocket } from "../api/api.js";
@@ -35,7 +32,7 @@ const ChatPage = () => {
       try {
         const socket = await connectSocket();
            socketRef.current = socket;
-           setSocketReady(true);
+          //  setSocketReady(true);
        
            socket.on("receiveMessage", (msg) => {
             if (msg.senderId === userId) return; // ignore own messages

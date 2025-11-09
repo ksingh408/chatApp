@@ -44,7 +44,7 @@ const getMessages = async (req, res) => {
     const total = await Message.countDocuments({ conversationId: roomId });
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
-    
+    console.log(page,limit);
     const messages = await Message.find({ conversationId: roomId })
       .populate("sender", "username email")
       .populate("receiver", "username email")
@@ -52,9 +52,11 @@ const getMessages = async (req, res) => {
       .skip((page-1)*limit)
       .limit(limit);
  
+      const hasMore = page * limit < total;
     res.json({
       messages,
       page,
+      hasMore,
       totalPages: Math.ceil(total / limit),});
   } catch (err) {
     console.error("Error in getMessages:", err.message);
@@ -71,7 +73,7 @@ const deleteMessage = async (req,res)=>{
 console.log(messageId)
     const message = await Message.findById(messageId);
 console.log("messageId :",message);
-    if(!message){
+     if(!message){
       return res.status(404).json({message:"message not found "});
 
     }

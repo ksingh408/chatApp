@@ -63,8 +63,9 @@ const ChatWindow = ({
       clearTimeout(timeout);
       timeout = setTimeout(async () => {
         if (!container || loadingOlder || loading || !hasMore) return;
-  
-        if (container.scrollTop <= 60) {
+
+        if (container.scrollTop <= 100 && hasMore && !loadingOlder)
+         {
           setLoadingOlder(true);
           const previousHeight = container.scrollHeight;
   
